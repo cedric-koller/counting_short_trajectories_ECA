@@ -71,3 +71,42 @@ def plot_ECA(states, title=None, show_grid=False):
         linewidth=4, edgecolor='black', facecolor='none'
     )
     ax.add_patch(rect)
+
+import matplotlib.pyplot as plt
+import matplotlib.patches as patches
+import numpy as np
+
+def plot_ECA(states, title=None, show_grid=False):
+    nrows, ncols = states.shape
+
+    fig, ax = plt.subplots(figsize=(10, 10))
+    fig.suptitle(title)
+
+    # Draw the image
+    ax.imshow(states, cmap='binary', interpolation='none',
+              extent=(0, ncols, nrows, 0))
+
+    ax.set_aspect('equal')
+
+    # Configure ticks to match cell edges
+    ax.set_xticks(np.arange(0, ncols + 1), minor=True)
+    ax.set_yticks(np.arange(0, nrows + 1), minor=True)
+
+    if show_grid:
+        ax.grid(which='minor', color='lightgrey', linestyle='-', linewidth=0.5)
+    else:
+        ax.grid(False)
+
+    # Hide major ticks and labels
+    ax.tick_params(which='both', bottom=False, left=False, labelbottom=False, labelleft=False)
+
+    # Add black frame around the entire image
+    rect = patches.Rectangle(
+        (0, 0), ncols, nrows,
+        linewidth=2, edgecolor='black', facecolor='none'
+    )
+    ax.add_patch(rect)
+
+    # Set limits to match exactly
+    ax.set_xlim(0, ncols)
+    ax.set_ylim(nrows, 0)
