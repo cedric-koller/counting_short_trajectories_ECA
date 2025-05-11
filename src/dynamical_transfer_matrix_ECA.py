@@ -180,11 +180,11 @@ def transfer_matrix_sparse_translation_right_2(rule, allowed_indexes, p=1, c=1, 
             respect_rule=True
             for k in range(permutations.shape[1]-1):
                 if k%2==0:
-                    if evolve(rule, permutations[i,k], permutations[j,k,1])!=permutations[i,k+1,1]: # if k=0,2,4 we check the second element of i (no translation)
+                    if evolve(rule, permutations[i,k], permutations[j,k,1])!=permutations[i,k+1,1]: # if k=0,2,4,... we check the second element of i (no translation)
                         respect_rule=False
                         break
                 else:
-                    if evolve(rule, permutations[i,k], permutations[j,k,1])!=permutations[i,k+1,0]: # if k=1,3,5 we check the first element of i (translation)
+                    if evolve(rule, permutations[i,k], permutations[j,k,1])!=permutations[i,k+1,0]: # if k=1,3,5,... we check the first element of i (translation)
                         respect_rule=False
                         break
             if respect_rule:
