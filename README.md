@@ -1,5 +1,5 @@
 # Counting Short Trajectories in Elementary Cellular Automata using the Transfer Matrix Method
-This repositeroy contains the code to reproduce the results and figure from the work above:
+This repositery contains the code to reproduce the results and figure from the work above:
 - space-time-diagrams.ipynb is used to generate the space-time diagrams figures.
 - generate_compatible_permutations.ipynb is used to create and save arrays containing the allowed indexes. As these indexes are the same for every rule, it should only be done once, and the results are saved in the folder indexes_compatible_permutations.
 - simulation.ipynb is used to create table 1 from the paper and the data for the entropy plots. The arrays containing the allowed indexes for the appropriate T=p+c should be created beforehand.
