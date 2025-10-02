@@ -292,7 +292,7 @@ def derivative_transfer_matrix_sparse_no_cycle(rule, allowed_indexes, p=2, mu=0)
     return T
 
 
-def entropy_and_density(rule, p=0, c=1, mu=0, rs=42, method_derivative='Hellmann-Feynman'):
+def entropy_and_density(rule, p=0, c=1, mu=0, rs=42, method_derivative='Hellmann-Feynman', check_degeneracy=False):
     '''
     Compute the entropy and density of the ECA using the transfer matrix method.
 
@@ -301,6 +301,7 @@ def entropy_and_density(rule, p=0, c=1, mu=0, rs=42, method_derivative='Hellmann
     Param: c (int): the size of the cycle
     Param: mu (float): the Lagrange multiplier for the density of the initial state
     Param: rs (int): the random seed for the initial vector
+    Param: check_degeneracy (bool): whether to check for degeneracy in the largest eigenvalue (only implement for Hellmann-Feynman derivation method)
 
     Return: float, float: the entropy and density of the ECA
     '''
@@ -316,7 +317,15 @@ def entropy_and_density(rule, p=0, c=1, mu=0, rs=42, method_derivative='Hellmann
                 if eig<=0:
                     return -np.inf, -np.nan
             elif method_derivative=='Hellmann-Feynman':
-                eigvals, eigvecs = spla.eigs(T, k=1, which='LR', v0=v0, maxiter=10*4**(p+c), return_eigenvectors=True)
+                if check_degeneracy:
+                    # Check for degeneracy in the largest eigenvalue
+                    eigvals, eigvecs = spla.eigs(T, k=2, which='LR', v0=v0, maxiter=10*4**(p+c))
+                    if np.isclose(eigvals[0], eigvals[1]):
+                        print("Degeneracy detected in the largest eigenvalue for rule {}. Lambda_1 = {}, Lambda_2 = {}".format(rule,eigvals[0], eigvals[1]))
+                    else:
+                        print("No degeneracy detected for rule {}. Lambda_1 = {}, Lambda_2 = {}".format(rule,eigvals[0], eigvals[1]))
+                else:
+                    eigvals, eigvecs = spla.eigs(T, k=1, which='LR', v0=v0, maxiter=10*4**(p+c), return_eigenvectors=True)
                 eig_=eigvals[0].real
                 vec_right=eigvecs[:,0]  
                 if eig_<=0:
@@ -358,7 +367,15 @@ def entropy_and_density(rule, p=0, c=1, mu=0, rs=42, method_derivative='Hellmann
                 if eig<=0:
                     return -np.inf, -np.nan
             elif method_derivative=='Hellmann-Feynman':
-                eigvals, eigvecs = spla.eigs(T, k=1, which='LR', v0=v0, maxiter=10*4**(p+c), return_eigenvectors=True)
+                if check_degeneracy:
+                    # Check for degeneracy in the largest eigenvalue
+                    eigvals, eigvecs = spla.eigs(T, k=2, which='LR', v0=v0, maxiter=10*4**(p+c))
+                    if np.isclose(eigvals[0], eigvals[1]):
+                        print("Degeneracy detected in the largest eigenvalue for rule {}. Lambda_1 = {}, Lambda_2 = {}".format(rule,eigvals[0], eigvals[1]))
+                    else:
+                        print("No degeneracy detected for rule {}. Lambda_1 = {}, Lambda_2 = {}".format(rule,eigvals[0], eigvals[1]))
+                else:
+                    eigvals, eigvecs = spla.eigs(T, k=1, which='LR', v0=v0, maxiter=10*4**(p+c), return_eigenvectors=True)
                 eig_=eigvals[0].real
                 vec_right=eigvecs[:,0]  
                 if eig_<=0:
@@ -393,7 +410,7 @@ def entropy_and_density(rule, p=0, c=1, mu=0, rs=42, method_derivative='Hellmann
         else:
             raise ValueError("Method must be 'finite difference' or 'Hellmann-Feynman'")
         
-def entropy_and_density_ending_all_0(rule, p=0, c=1, mu=0, rs=42, method_derivative='Hellmann-Feynman'):
+def entropy_and_density_ending_all_0(rule, p=0, c=1, mu=0, rs=42, method_derivative='Hellmann-Feynman', check_degeneracy=False):
     '''
     Compute the entropy and density of the ECA using the transfer matrix method.
 
@@ -417,7 +434,15 @@ def entropy_and_density_ending_all_0(rule, p=0, c=1, mu=0, rs=42, method_derivat
                 if eig<=0:
                     return -np.inf, -np.nan
             elif method_derivative=='Hellmann-Feynman':
-                eigvals, eigvecs = spla.eigs(T, k=1, which='LR', v0=v0, maxiter=10*4**(p+c), return_eigenvectors=True)
+                if check_degeneracy:
+                    # Check for degeneracy in the largest eigenvalue
+                    eigvals, eigvecs = spla.eigs(T, k=2, which='LR', v0=v0, maxiter=10*4**(p+c))
+                    if np.isclose(eigvals[0], eigvals[1]):
+                        print("Degeneracy detected in the largest eigenvalue for rule {}. Lambda_1 = {}, Lambda_2 = {}".format(rule,eigvals[0], eigvals[1]))
+                    else:
+                        print("No degeneracy detected for rule {}. Lambda_1 = {}, Lambda_2 = {}".format(rule,eigvals[0], eigvals[1]))
+                else:
+                    eigvals, eigvecs = spla.eigs(T, k=1, which='LR', v0=v0, maxiter=10*4**(p+c), return_eigenvectors=True)
                 eig_=eigvals[0].real
                 vec_right=eigvecs[:,0]  
                 if eig_<=0:
@@ -455,7 +480,7 @@ def entropy_and_density_ending_all_0(rule, p=0, c=1, mu=0, rs=42, method_derivat
         raise ValueError("The size of the cycle must be greater than 0")
 
 
-def entropy_and_density_translation_left(rule, p=1, c=1, mu=0, rs=42, method_derivative='Hellmann-Feynman'):
+def entropy_and_density_translation_left(rule, p=1, c=1, mu=0, rs=42, method_derivative='Hellmann-Feynman', check_degeneracy=False):
     '''
     Compute the entropy and density of the ECA using the transfer matrix method.
 
@@ -464,6 +489,7 @@ def entropy_and_density_translation_left(rule, p=1, c=1, mu=0, rs=42, method_der
     Param: c (int): the size of the cycle
     Param: mu (float): the Lagrange multiplier for the density of the initial state
     Param: rs (int): the random seed for the initial vector
+    Param: check_degeneracy (bool): whether to check for degeneracy in the eigenvalues (only implemented to the Hellmann-Feynman method)
 
     Return: float, float: the entropy and density of the ECA
     '''
@@ -482,7 +508,15 @@ def entropy_and_density_translation_left(rule, p=1, c=1, mu=0, rs=42, method_der
             if eig<=0:
                 return -np.inf, -np.nan
         elif method_derivative=='Hellmann-Feynman':
-            eigvals, eigvecs = spla.eigs(T, k=1, which='LR', v0=v0, maxiter=10*4**(p+c), return_eigenvectors=True)
+            if check_degeneracy:
+                # Check for degeneracy in the largest eigenvalue
+                eigvals, eigvecs = spla.eigs(T, k=2, which='LR', v0=v0, maxiter=10*4**(p+c))
+                if np.isclose(eigvals[0], eigvals[1]):
+                    print("Degeneracy detected in the largest eigenvalue for rule {}. Lambda_1 = {}, Lambda_2 = {}".format(rule,eigvals[0], eigvals[1]))
+                else:
+                    print("No degeneracy detected for rule {}. Lambda_1 = {}, Lambda_2 = {}".format(rule,eigvals[0], eigvals[1]))
+            else:
+                eigvals, eigvecs = spla.eigs(T, k=1, which='LR', v0=v0, maxiter=10*4**(p+c), return_eigenvectors=True)
             eig_=eigvals[0].real
             vec_right=eigvecs[:,0]  
             if eig_<=0:
@@ -517,7 +551,7 @@ def entropy_and_density_translation_left(rule, p=1, c=1, mu=0, rs=42, method_der
     else:
         raise ValueError("Method must be 'finite difference' or 'Hellmann-Feynman'")
 
-def entropy_and_density_translation_right(rule, p=1, c=1, mu=0, rs=42, method_derivative='Hellmann-Feynman'):
+def entropy_and_density_translation_right(rule, p=1, c=1, mu=0, rs=42, method_derivative='Hellmann-Feynman', check_degeneracy=False):
     '''
     Compute the entropy and density of the ECA using the transfer matrix method.
 
@@ -526,6 +560,7 @@ def entropy_and_density_translation_right(rule, p=1, c=1, mu=0, rs=42, method_de
     Param: c (int): the size of the cycle
     Param: mu (float): the Lagrange multiplier for the density of the initial state
     Param: rs (int): the random seed for the initial vector
+    Param: check_degeneracy (bool): whether to check for degeneracy in the eigenvalues (only implemented for Hellmann-Feynman)
 
     Return: float, float: the entropy and density of the ECA
     '''
@@ -544,7 +579,15 @@ def entropy_and_density_translation_right(rule, p=1, c=1, mu=0, rs=42, method_de
             if eig<=0:
                 return -np.inf, -np.nan
         elif method_derivative=='Hellmann-Feynman':
-            eigvals, eigvecs = spla.eigs(T, k=1, which='LR', v0=v0, maxiter=10*4**(p+c), return_eigenvectors=True)
+            if check_degeneracy:
+                # Check for degeneracy in the largest eigenvalue
+                eigvals, eigvecs = spla.eigs(T, k=2, which='LR', v0=v0, maxiter=10*4**(p+c))
+                if np.isclose(eigvals[0], eigvals[1]):
+                    print("Degeneracy detected in the largest eigenvalue for rule {}. Lambda_1 = {}, Lambda_2 = {}".format(rule,eigvals[0], eigvals[1]))
+                else:
+                    print("No degeneracy detected for rule {}. Lambda_1 = {}, Lambda_2 = {}".format(rule,eigvals[0], eigvals[1]))
+            else:
+                eigvals, eigvecs = spla.eigs(T, k=1, which='LR', v0=v0, maxiter=10*4**(p+c), return_eigenvectors=True)
             eig_=eigvals[0].real
             vec_right=eigvecs[:,0]  
             if eig_<=0:
@@ -579,7 +622,7 @@ def entropy_and_density_translation_right(rule, p=1, c=1, mu=0, rs=42, method_de
     else:
         raise ValueError("Method must be 'finite difference' or 'Hellmann-Feynman'")
 
-def entropy_and_density_translation_right_2(rule, p=1, c=1, mu=0, rs=42, method_derivative='Hellmann-Feynman'):
+def entropy_and_density_translation_right_2(rule, p=1, c=1, mu=0, rs=42, method_derivative='Hellmann-Feynman', check_degeneracy=False):
     '''
     Compute the entropy and density of the ECA using the transfer matrix method.
 
@@ -588,6 +631,7 @@ def entropy_and_density_translation_right_2(rule, p=1, c=1, mu=0, rs=42, method_
     Param: c (int): the size of the cycle
     Param: mu (float): the Lagrange multiplier for the density of the initial state
     Param: rs (int): the random seed for the initial vector
+    Param: check_degeneracy (bool): whether to check for degeneracy in the eigenvalues (only implemented for Hellmann-Feynman)
 
     Return: float, float: the entropy and density of the ECA
     '''
@@ -605,7 +649,15 @@ def entropy_and_density_translation_right_2(rule, p=1, c=1, mu=0, rs=42, method_
             if eig<=0:
                 return -np.inf, -np.nan
         elif method_derivative=='Hellmann-Feynman':
-            eigvals, eigvecs = spla.eigs(T, k=1, which='LR', v0=v0, maxiter=10*4**(p+c), return_eigenvectors=True)
+            if check_degeneracy:
+                # Check for degeneracy in the largest eigenvalue
+                eigvals, eigvecs = spla.eigs(T, k=2, which='LR', v0=v0, maxiter=10*4**(p+c))
+                if np.isclose(eigvals[0], eigvals[1]):
+                    print("Degeneracy detected in the largest eigenvalue for rule {}. Lambda_1 = {}, Lambda_2 = {}".format(rule,eigvals[0], eigvals[1]))
+                else:
+                    print("No degeneracy detected for rule {}. Lambda_1 = {}, Lambda_2 = {}".format(rule,eigvals[0], eigvals[1]))
+            else:
+                eigvals, eigvecs = spla.eigs(T, k=1, which='LR', v0=v0, maxiter=10*4**(p+c), return_eigenvectors=True)
             eig_=eigvals[0].real
             vec_right=eigvecs[:,0]  
             if eig_<=0:
@@ -640,7 +692,7 @@ def entropy_and_density_translation_right_2(rule, p=1, c=1, mu=0, rs=42, method_
     else:
         raise ValueError("Method must be 'finite difference' or 'Hellmann-Feynman'")
 
-def entropy_and_density_translation_left_2(rule, p=1, c=1, mu=0, rs=42, method_derivative='Hellmann-Feynman'):
+def entropy_and_density_translation_left_2(rule, p=1, c=1, mu=0, rs=42, method_derivative='Hellmann-Feynman', check_degeneracy=False):
     '''
     Compute the entropy and density of the ECA using the transfer matrix method.
 
@@ -649,6 +701,7 @@ def entropy_and_density_translation_left_2(rule, p=1, c=1, mu=0, rs=42, method_d
     Param: c (int): the size of the cycle
     Param: mu (float): the Lagrange multiplier for the density of the initial state
     Param: rs (int): the random seed for the initial vector
+    Param: check_degeneracy (bool): whether to check for degeneracy in the eigenvalues (only implemented for Hellmann-Feynman)
 
     Return: float, float: the entropy and density of the ECA
     '''
@@ -667,7 +720,15 @@ def entropy_and_density_translation_left_2(rule, p=1, c=1, mu=0, rs=42, method_d
             if eig<=0:
                 return -np.inf, -np.nan
         elif method_derivative=='Hellmann-Feynman':
-            eigvals, eigvecs = spla.eigs(T, k=1, which='LR', v0=v0, maxiter=10*4**(p+c), return_eigenvectors=True)
+            if check_degeneracy:
+                # Check for degeneracy in the largest eigenvalue
+                eigvals, eigvecs = spla.eigs(T, k=2, which='LR', v0=v0, maxiter=10*4**(p+c))
+                if np.isclose(eigvals[0], eigvals[1]):
+                    print("Degeneracy detected in the largest eigenvalue for rule {}. Lambda_1 = {}, Lambda_2 = {}".format(rule,eigvals[0], eigvals[1]))
+                else:
+                    print("No degeneracy detected for rule {}. Lambda_1 = {}, Lambda_2 = {}".format(rule,eigvals[0], eigvals[1]))
+            else:
+                eigvals, eigvecs = spla.eigs(T, k=1, which='LR', v0=v0, maxiter=10*4**(p+c), return_eigenvectors=True)
             eig_=eigvals[0].real
             vec_right=eigvecs[:,0]  
             if eig_<=0:
